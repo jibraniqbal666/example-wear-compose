@@ -20,13 +20,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
+import androidx.wear.compose.navigation.SwipeDismissableNavHost
+import androidx.wear.compose.navigation.composable
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.example.android.wearable.composeforwearos.theme.WearAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -64,24 +66,39 @@ fun WearApp() {
                 )
             }
         ) {
+            val navController = rememberSwipeDismissableNavController()
 
-            val contentModifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-
-            val weekData = WidgetData.FakeData
-            ScalingLazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                autoCentering = AutoCenteringParams(itemIndex = 0),
-                state = listState
+            SwipeDismissableNavHost(
+                navController = navController,
+                startDestination = "main"
             ) {
+                val weekData = WidgetData.FakeData
+                composable("main") {
+                    val contentModifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp)
 
-                item { DeliveryText() }
-                item { HXDCalendarIconWidget(timeInMillis = weekData.weeks.first().date) }
+                    ScalingLazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        autoCentering = AutoCenteringParams(itemIndex = 0),
+                        state = listState
+                    ) {
 
-                weekData.weeks.first().recipes.forEach {
-                    item { RecipeCard(uiModel = it, contentModifier) }
+                        item { DeliveryText() }
+                        item { HXDCalendarIconWidget(timeInMillis = weekData.weeks.first().date) }
+
+                        itemsIndexed(weekData.weeks.first().recipes) { index, item ->
+                            RecipeCard(uiModel = item, index, contentModifier) {
+                                navController.navigate("detail/$it")
+                            }
+                        }
+                    }
+                }
+
+                composable("detail/{index}") {
+                    val index = it.arguments?.getString("index")?.toInt() ?: 0
+                    RecipeDetail(uiModel = weekData.weeks.first().recipes[index], index = index)
                 }
             }
         }

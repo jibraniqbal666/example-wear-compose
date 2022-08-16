@@ -1,7 +1,7 @@
 package com.example.android.wearable.composeforwearos
 
 data class WidgetUiModel(
-    val weeks: List<WeekUiModel>
+    val weeks: List<WeekUiModel>,
 )
 
 data class WeekUiModel(
@@ -9,13 +9,14 @@ data class WeekUiModel(
     val deliveryStatus: String,
     val deliveryStatusSubtitle: String?,
     val action: String?,
-    val recipes: List<RecipeUiModel>
+    val recipes: List<RecipeUiModel>,
 )
 
 data class RecipeUiModel(
     val title: String,
     val imageUrl: String,
-    val description: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes"
+    val description: String = "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes",
+    val recipeStep: String = " Step 1: Do this \n Step 2: Do that \n Step 3: Enjoy",
 )
 
 object WidgetData {

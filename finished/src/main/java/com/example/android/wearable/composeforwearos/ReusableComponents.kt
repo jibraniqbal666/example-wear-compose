@@ -16,15 +16,13 @@
 package com.example.android.wearable.composeforwearos
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Message
-import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.runtime.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,22 +32,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
 import coil.compose.rememberAsyncImagePainter
+import com.example.android.wearable.composeforwearos.theme.Green_300
 import com.example.android.wearable.composeforwearos.theme.WearAppTheme
 import java.text.SimpleDateFormat
 import java.util.*
-import com.example.android.wearable.composeforwearos.theme.Green_300
 
 /* Contains individual Wear OS demo composables for the code lab. */
 
 @Composable
 fun RecipeCard(
     uiModel: RecipeUiModel,
-    modifier: Modifier = Modifier
+    index: Int,
+    modifier: Modifier = Modifier,
+    onClick: (index: Int) -> Unit,
 ) {
 
     TitleCard(
         modifier = modifier.wrapContentSize(),
-        onClick = {  },
+        onClick = { onClick(index) },
         title = { Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         backgroundPainter = CardDefaults.imageWithScrimBackgroundPainter(
             backgroundImagePainter = rememberAsyncImagePainter(uiModel.imageUrl)
@@ -59,6 +59,38 @@ fun RecipeCard(
         content = {
             Text(text = uiModel.description,
                 fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
+        }
+    )
+}
+
+@Composable
+fun RecipeDetail(
+    uiModel: RecipeUiModel,
+    index: Int,
+    modifier: Modifier = Modifier,
+) {
+    TitleCard(
+        modifier = modifier
+            .fillMaxSize(),
+        onClick = { },
+        title = {
+            Text(uiModel.title,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .padding(top = 16.dp))
+        },
+        backgroundPainter = CardDefaults.imageWithScrimBackgroundPainter(
+            backgroundImagePainter = rememberAsyncImagePainter(uiModel.imageUrl)
+        ),
+        contentColor = MaterialTheme.colors.onSurface,
+        titleColor = MaterialTheme.colors.onSurface,
+        content = {
+            Column(modifier
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)) {
+                Text(text = uiModel.description, fontSize = 12.sp)
+                Text(text = uiModel.recipeStep, fontSize = 12.sp)
+            }
         }
     )
 }
