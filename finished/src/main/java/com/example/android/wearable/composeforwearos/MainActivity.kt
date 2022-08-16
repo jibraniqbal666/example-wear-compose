@@ -18,35 +18,29 @@ package com.example.android.wearable.composeforwearos
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.*
 import com.example.android.wearable.composeforwearos.theme.WearAppTheme
 
-/**
- * This code lab is meant to help existing Compose developers get up to speed quickly on
- * Compose for Wear OS.
- *
- * The code lab walks through a majority of the simple composables for Wear OS (both similar to
- * existing mobile composables and new composables).
- *
- * It also covers more advanced composables like [ScalingLazyColumn] (Wear OS's version of
- * [LazyColumn]) and the Wear OS version of [Scaffold].
- *
- * Check out [this link](https://android-developers.googleblog.com/2021/10/compose-for-wear-os-now-in-developer.html)
- * for more information on Compose for Wear OS.
- */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            WearApp()
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color(0xFF056835))
+            ) {
+                WearApp()
+            }
         }
     }
 }
@@ -54,11 +48,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun WearApp() {
     WearAppTheme {
-        // TODO: Swap to ScalingLazyListState
         val listState = rememberScalingLazyListState()
-
-        /* *************************** Part 4: Wear OS Scaffold *************************** */
-        // TODO (Start): Create a Scaffold (Wear Version)
         Scaffold(
             timeText = {
                 if (!listState.isScrollInProgress) {
@@ -66,8 +56,6 @@ fun WearApp() {
                 }
             },
             vignette = {
-                // Only show a Vignette for scrollable screens. This code lab only has one screen,
-                // which is scrollable, so we show it all the time.
                 Vignette(vignettePosition = VignettePosition.TopAndBottom)
             },
             positionIndicator = {
@@ -77,28 +65,25 @@ fun WearApp() {
             }
         ) {
 
-            // Modifiers used by our Wear composables.
             val contentModifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 8.dp)
-            val iconModifier = Modifier
-                .size(24.dp)
-                .wrapContentSize(align = Alignment.Center)
 
-            /* *************************** Part 3: ScalingLazyColumn *************************** */
-            // TODO: Swap a ScalingLazyColumn (Wear's version of LazyColumn)
+            val weekData = WidgetData.FakeData
             ScalingLazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 autoCentering = AutoCenteringParams(itemIndex = 0),
                 state = listState
             ) {
 
-                /* ******************* Part 1: Simple composables ******************* */
-                item { HXDCalendarIconWidget() }
-                item { RecipeExample(contentModifier, iconModifier) }
-            }
+                item { DeliveryText() }
+                item { HXDCalendarIconWidget(timeInMillis = weekData.weeks.first().date) }
 
-            // TODO (End): Create a Scaffold (Wear Version)
+                weekData.weeks.first().recipes.forEach {
+                    item { RecipeCard(uiModel = it, contentModifier) }
+                }
+            }
         }
     }
 }

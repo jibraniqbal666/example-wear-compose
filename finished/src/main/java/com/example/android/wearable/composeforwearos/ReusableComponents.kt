@@ -15,12 +15,11 @@
  */
 package com.example.android.wearable.composeforwearos
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Message
 import androidx.compose.material.icons.rounded.Phone
-import androidx.compose.material.icons.rounded.SelfImprovement
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,185 +33,70 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material.*
-import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.android.wearable.composeforwearos.theme.WearAppTheme
 import java.text.SimpleDateFormat
 import java.util.*
+import com.example.android.wearable.composeforwearos.theme.Green_300
 
 /* Contains individual Wear OS demo composables for the code lab. */
 
-// TODO: Create a Button Composable (with a Row to center)
 @Composable
-fun ButtonExample(
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
+fun RecipeCard(
+    uiModel: RecipeUiModel,
+    modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.Center
-    ) {
-        // Button
-        Button(
-            modifier = Modifier.size(ButtonDefaults.LargeButtonSize),
-            onClick = { /* ... */ },
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Phone,
-                contentDescription = "triggers phone action",
-                modifier = iconModifier
-            )
-        }
-    }
-}
 
-// TODO: Create a Text Composable
-@Composable
-fun TextExample(modifier: Modifier = Modifier) {
-    Text(
-        modifier = modifier,
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.device_shape)
-    )
-}
-
-// TODO: Create a Card (specifically, an AppCard) Composable
-@Composable
-fun CardExample(
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-) {
-    AppCard(
-        modifier = modifier,
-        appImage = {
-            Icon(
-                imageVector = Icons.Rounded.Message,
-                contentDescription = "triggers open message action",
-                modifier = iconModifier
-            )
-        },
-        appName = { Text("Messages") },
-        time = { Text("12m") },
-        title = { Text("Kim Green") },
-        onClick = { /* ... */ }
-    ) {
-        Text("On my way!")
-    }
-}
-
-// TODO: Create a Chip Composable
-@Composable
-fun ChipExample(
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-) {
-    Chip(
-        modifier = modifier,
-        onClick = { /* ... */ },
-        label = {
-            Text(
-                text = "5 minute Meditation",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        },
-        icon = {
-            Icon(
-                imageVector = Icons.Rounded.SelfImprovement,
-                contentDescription = "triggers meditation action",
-                modifier = iconModifier
-            )
-        },
-    )
-}
-
-// TODO: Create a Chip Composable
-@Composable
-fun RecipeExample(
-    modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier,
-) {
-    Chip(
-        modifier = modifier,
-        onClick = { /* ... */ },
-        label = {
-            Text(
-                text = "Chicken Tandoori Biryani Killing Me",
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                style = TextStyle(
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp
-                )
-            )
-        },
-        icon = {
-            AsyncImage(
-                modifier = Modifier.size(32.dp),
-                model = "https://picsum.photos/id/237/536/354",
-                contentDescription = null
-            )
-        },
-    )
-}
-
-// TODO: Create a ToggleChip Composable
-@Composable
-fun ToggleChipExample(modifier: Modifier = Modifier) {
-    var checked by remember { mutableStateOf(true) }
-    ToggleChip(
-        modifier = modifier,
-        checked = checked,
-        toggleControl = {
-            Icon(
-                imageVector = ToggleChipDefaults.switchIcon(checked = checked),
-                contentDescription = if (checked) "On" else "Off"
-            )
-        },
-        onCheckedChange = {
-            checked = it
-        },
-        label = {
-            Text(
-                text = "Sound",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
+    TitleCard(
+        modifier = modifier.wrapContentSize(),
+        onClick = {  },
+        title = { Text(uiModel.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        backgroundPainter = CardDefaults.imageWithScrimBackgroundPainter(
+            backgroundImagePainter = rememberAsyncImagePainter(uiModel.imageUrl)
+        ),
+        contentColor = MaterialTheme.colors.onSurface,
+        titleColor = MaterialTheme.colors.onSurface,
+        content = {
+            Text(text = uiModel.description,
+                fontSize = 12.sp, maxLines = 2, overflow = TextOverflow.Ellipsis)
         }
     )
 }
 
-// Function only used as a demo for when you start the code lab (removed as step 1).
 @Composable
-fun StartOnlyTextComposables() {
+fun DeliveryText() {
     Text(
         modifier = Modifier.fillMaxSize(),
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        text = stringResource(R.string.hello_world_starter)
+        color = Green_300,
+        style = TextStyle(fontWeight = FontWeight.Bold),
+        text = "Upcoming Delivery!"
     )
 }
 
 @Composable
-fun HXDCalendarIconWidget(modifier: Modifier = Modifier) {
+fun HXDCalendarIconWidget(modifier: Modifier = Modifier, timeInMillis: Long) {
     val backgroundColor = Color(0xFFE4FABF)
     val foregroundColor = Color(0xFF067A46)
     val locale = Locale.getDefault()
 
-    Box(
+    Card(
         modifier = modifier
-            .background(backgroundColor)
-            .size(64.dp),
-        contentAlignment = Alignment.Center
-    ) {
+            .width(64.dp),
+        backgroundPainter = CardDefaults.cardBackgroundPainter(
+            startBackgroundColor = backgroundColor,
+            endBackgroundColor = backgroundColor
+        ),
+        shape = RoundedCornerShape(20),
+        onClick = { })
+    {
+
         Column(
-            Modifier
-                .padding(vertical = 8.dp)
-                .fillMaxSize(),
+            Modifier.align(Alignment.CenterHorizontally),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            val dayOfWeek = Date().time.toFormattedDayOfWeek(locale)
+            val dayOfWeek = timeInMillis.toFormattedDayOfWeek(locale)
             Text(
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
@@ -223,162 +107,27 @@ fun HXDCalendarIconWidget(modifier: Modifier = Modifier) {
                 text = dayOfWeek,
             )
 
-            val dayOfMonth = Date().time.toFormattedDayOfMonth(locale)
+            val dayOfMonth = timeInMillis.toFormattedDayOfMonth(locale)
             Text(
                 style = TextStyle(
                     fontWeight = FontWeight.Bold,
-                    fontSize = 28.sp,
-                    lineHeight = 32.sp,
+                    fontSize = 24.sp,
+                    lineHeight = 26.sp,
                 ),
                 color = foregroundColor,
                 text = dayOfMonth,
-            )
-
-            val month = Date().time.toFormattedMonth(locale)
-            Text(
-                style = TextStyle(
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
-                ),
-                color = foregroundColor,
-                text = month,
             )
         }
     }
 }
 
-/* Previews of Composables. */
-// Note: Preview in Android Studio doesn't support the round view yet (coming soon).
-
-// Hello, world starter text preview
-@Preview(
-    group = "Starter",
-    widthDp = WEAR_PREVIEW_ELEMENT_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ELEMENT_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
+@Preview
 @Composable
-fun StartOnlyTextComposablesPreview() {
+fun CalendarExamplePreview() {
     WearAppTheme {
-        StartOnlyTextComposables()
-    }
-}
-
-// Button Preview
-@Preview(
-    group = "Button",
-    widthDp = WEAR_PREVIEW_ELEMENT_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ELEMENT_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
-@Composable
-fun ButtonExamplePreview() {
-    WearAppTheme {
-        ButtonExample(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            iconModifier = Modifier
-                .size(24.dp)
-                .wrapContentSize(align = Alignment.Center)
-        )
-    }
-}
-
-// Text Preview
-@Preview(
-    group = "Text",
-    widthDp = WEAR_PREVIEW_ROW_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ROW_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
-@Composable
-fun TextExamplePreview() {
-    WearAppTheme {
-        TextExample(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
-        )
-    }
-}
-
-// Card Preview
-@Preview(
-    group = "Card",
-    widthDp = WEAR_PREVIEW_ROW_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ROW_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
-@Composable
-fun CardExamplePreview() {
-    WearAppTheme {
-        CardExample(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            iconModifier = Modifier
-                .size(24.dp)
-                .wrapContentSize(align = Alignment.Center)
-        )
-    }
-}
-
-
-// Chip Preview
-@Preview(
-    group = "Chip",
-    widthDp = WEAR_PREVIEW_ROW_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ROW_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
-@Composable
-fun ChipExamplePreview() {
-    WearAppTheme {
-        RecipeExample(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp),
-            iconModifier = Modifier
-                .size(24.dp)
-                .wrapContentSize(align = Alignment.Center)
-        )
-    }
-}
-
-// Toggle Chip Preview
-@Preview(
-    group = "Toggle Chip",
-    widthDp = WEAR_PREVIEW_ROW_WIDTH_DP,
-    heightDp = WEAR_PREVIEW_ROW_HEIGHT_DP,
-    apiLevel = WEAR_PREVIEW_API_LEVEL,
-    uiMode = WEAR_PREVIEW_UI_MODE,
-    backgroundColor = WEAR_PREVIEW_BACKGROUND_COLOR_BLACK,
-    showBackground = WEAR_PREVIEW_SHOW_BACKGROUND
-)
-@Composable
-fun ToggleChipExamplePreview() {
-    WearAppTheme {
-        ToggleChipExample(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 8.dp)
+        HXDCalendarIconWidget(
+            modifier = Modifier,
+            timeInMillis = Date().time
         )
     }
 }
@@ -392,9 +141,4 @@ fun Long.toFormattedDayOfMonth(locale: Locale): String {
 fun Long.toFormattedDayOfWeek(locale: Locale): String {
     val formatterWeek = SimpleDateFormat("EEE", locale)
     return formatterWeek.format(this).uppercase()
-}
-
-fun Long.toFormattedMonth(locale: Locale): String {
-    val formatterMonth = SimpleDateFormat("MMM", locale)
-    return formatterMonth.format(this).uppercase()
 }
