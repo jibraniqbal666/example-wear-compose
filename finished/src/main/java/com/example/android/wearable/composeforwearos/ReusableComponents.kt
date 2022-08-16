@@ -15,39 +15,29 @@
  */
 package com.example.android.wearable.composeforwearos
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Message
 import androidx.compose.material.icons.rounded.Phone
 import androidx.compose.material.icons.rounded.SelfImprovement
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.AppCard
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.ToggleChip
-import androidx.wear.compose.material.ToggleChipDefaults
+import androidx.compose.ui.unit.sp
+import androidx.wear.compose.material.*
+import coil.compose.AsyncImage
 import com.example.android.wearable.composeforwearos.theme.WearAppTheme
+import java.text.SimpleDateFormat
+import java.util.*
 
 /* Contains individual Wear OS demo composables for the code lab. */
 
@@ -55,7 +45,7 @@ import com.example.android.wearable.composeforwearos.theme.WearAppTheme
 @Composable
 fun ButtonExample(
     modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier
+    iconModifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
@@ -90,7 +80,7 @@ fun TextExample(modifier: Modifier = Modifier) {
 @Composable
 fun CardExample(
     modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier
+    iconModifier: Modifier = Modifier,
 ) {
     AppCard(
         modifier = modifier,
@@ -114,7 +104,7 @@ fun CardExample(
 @Composable
 fun ChipExample(
     modifier: Modifier = Modifier,
-    iconModifier: Modifier = Modifier
+    iconModifier: Modifier = Modifier,
 ) {
     Chip(
         modifier = modifier,
@@ -131,6 +121,37 @@ fun ChipExample(
                 imageVector = Icons.Rounded.SelfImprovement,
                 contentDescription = "triggers meditation action",
                 modifier = iconModifier
+            )
+        },
+    )
+}
+
+// TODO: Create a Chip Composable
+@Composable
+fun RecipeExample(
+    modifier: Modifier = Modifier,
+    iconModifier: Modifier = Modifier,
+) {
+    Chip(
+        modifier = modifier,
+        onClick = { /* ... */ },
+        label = {
+            Text(
+                text = "Chicken Tandoori Biryani Killing Me",
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
+                )
+            )
+        },
+        icon = {
+            AsyncImage(
+                modifier = Modifier.size(32.dp),
+                model = "https://picsum.photos/id/237/536/354",
+                contentDescription = null
             )
         },
     )
@@ -173,6 +194,60 @@ fun StartOnlyTextComposables() {
     )
 }
 
+@Composable
+fun HXDCalendarIconWidget(modifier: Modifier = Modifier) {
+    val backgroundColor = Color(0xFFE4FABF)
+    val foregroundColor = Color(0xFF067A46)
+    val locale = Locale.getDefault()
+
+    Box(
+        modifier = modifier
+            .background(backgroundColor)
+            .size(64.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val dayOfWeek = Date().time.toFormattedDayOfWeek(locale)
+            Text(
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp
+                ),
+                color = foregroundColor,
+                text = dayOfWeek,
+            )
+
+            val dayOfMonth = Date().time.toFormattedDayOfMonth(locale)
+            Text(
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 28.sp,
+                    lineHeight = 32.sp,
+                ),
+                color = foregroundColor,
+                text = dayOfMonth,
+            )
+
+            val month = Date().time.toFormattedMonth(locale)
+            Text(
+                style = TextStyle(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                ),
+                color = foregroundColor,
+                text = month,
+            )
+        }
+    }
+}
+
 /* Previews of Composables. */
 // Note: Preview in Android Studio doesn't support the round view yet (coming soon).
 
@@ -207,8 +282,12 @@ fun StartOnlyTextComposablesPreview() {
 fun ButtonExamplePreview() {
     WearAppTheme {
         ButtonExample(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            iconModifier = Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            iconModifier = Modifier
+                .size(24.dp)
+                .wrapContentSize(align = Alignment.Center)
         )
     }
 }
@@ -227,7 +306,9 @@ fun ButtonExamplePreview() {
 fun TextExamplePreview() {
     WearAppTheme {
         TextExample(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
     }
 }
@@ -246,8 +327,12 @@ fun TextExamplePreview() {
 fun CardExamplePreview() {
     WearAppTheme {
         CardExample(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            iconModifier = Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            iconModifier = Modifier
+                .size(24.dp)
+                .wrapContentSize(align = Alignment.Center)
         )
     }
 }
@@ -266,9 +351,13 @@ fun CardExamplePreview() {
 @Composable
 fun ChipExamplePreview() {
     WearAppTheme {
-        ChipExample(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp),
-            iconModifier = Modifier.size(24.dp).wrapContentSize(align = Alignment.Center)
+        RecipeExample(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp),
+            iconModifier = Modifier
+                .size(24.dp)
+                .wrapContentSize(align = Alignment.Center)
         )
     }
 }
@@ -287,7 +376,25 @@ fun ChipExamplePreview() {
 fun ToggleChipExamplePreview() {
     WearAppTheme {
         ToggleChipExample(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
         )
     }
+}
+
+
+fun Long.toFormattedDayOfMonth(locale: Locale): String {
+    val formatterDay = SimpleDateFormat("dd", locale)
+    return formatterDay.format(this)
+}
+
+fun Long.toFormattedDayOfWeek(locale: Locale): String {
+    val formatterWeek = SimpleDateFormat("EEE", locale)
+    return formatterWeek.format(this).uppercase()
+}
+
+fun Long.toFormattedMonth(locale: Locale): String {
+    val formatterMonth = SimpleDateFormat("MMM", locale)
+    return formatterMonth.format(this).uppercase()
 }
